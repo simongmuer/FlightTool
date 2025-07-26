@@ -48,24 +48,31 @@ export function setupAuth(app: Express) {
     secret: process.env.SESSION_SECRET || "dev-secret-key-change-in-production",
     resave: false,
     saveUninitialized: false,
+    name: 'connect.sid', // Explicitly set session name
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false, // Always false in development to ensure cookies work
       maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
-      sameSite: process.env.NODE_ENV === "production" ? "lax" : "lax",
+      sameSite: 'lax',
+      path: '/', // Ensure cookie is available for all paths
     },
   };
 
   // Add session store if database is available
-  try {
-    const PostgresSessionStore = connectPg(session);
-    sessionSettings.store = new PostgresSessionStore({
-      conString: process.env.DATABASE_URL,
-      tableName: 'sessions', // Use our existing sessions table
-      createTableIfMissing: false,
-    });
-  } catch (error) {
-    console.log("Using memory store for sessions (development mode)");
+  if (process.env.DATABASE_URL) {
+    try {
+      const PostgresSessionStore = connectPg(session);
+      sessionSettings.store = new PostgresSessionStore({
+        conString: process.env.DATABASE_URL,
+        tableName: 'sessions', // Use our existing sessions table
+        createTableIfMissing: false,
+      });
+      console.log("Using PostgreSQL session store");
+    } catch (error) {
+      console.log("PostgreSQL session store failed, using memory store:", error);
+    }
+  } else {
+    console.log("No DATABASE_URL, using memory store for sessions");
   }
 
   app.set("trust proxy", 1);
@@ -94,6 +101,7 @@ export function setupAuth(app: Express) {
       const user = await storage.getUser(id);
       done(null, user);
     } catch (error) {
+      console.error("Deserialization error:", error);
       done(error);
     }
   });

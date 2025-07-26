@@ -14,9 +14,12 @@ export async function apiRequest(
 ): Promise<Response> {
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers: {
+      "Content-Type": "application/json",
+      ...(data ? {} : {}),
+    },
     body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
+    credentials: "include", // This is crucial for session cookies
   });
 
   await throwIfResNotOk(res);
@@ -31,6 +34,9 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     const res = await fetch(queryKey.join("/") as string, {
       credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {

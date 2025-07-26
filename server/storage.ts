@@ -76,14 +76,14 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(flights)
       .where(eq(flights.userId, userId))
-      .orderBy(desc(flights.date));
+      .orderBy(desc(flights.departureDate));
   }
 
   async getFlight(id: string, userId: string): Promise<Flight | undefined> {
     const [flight] = await db
       .select()
       .from(flights)
-      .where(and(eq(flights.id, id), eq(flights.userId, userId)));
+      .where(and(eq(flights.id, parseInt(id)), eq(flights.userId, userId)));
     return flight;
   }
 
@@ -96,7 +96,7 @@ export class DatabaseStorage implements IStorage {
     const [flight] = await db
       .update(flights)
       .set({ ...flightData, updatedAt: new Date() })
-      .where(and(eq(flights.id, id), eq(flights.userId, userId)))
+      .where(and(eq(flights.id, parseInt(id)), eq(flights.userId, userId)))
       .returning();
     return flight;
   }
@@ -104,8 +104,8 @@ export class DatabaseStorage implements IStorage {
   async deleteFlight(id: string, userId: string): Promise<boolean> {
     const result = await db
       .delete(flights)
-      .where(and(eq(flights.id, id), eq(flights.userId, userId)));
-    return result.length > 0;
+      .where(and(eq(flights.id, parseInt(id)), eq(flights.userId, userId)));
+    return result.rowCount > 0;
   }
 
   // Airport operations
@@ -178,7 +178,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(flights)
       .where(eq(flights.userId, userId))
-      .orderBy(desc(flights.date))
+      .orderBy(desc(flights.departureDate))
       .limit(5);
 
     // Get top airlines

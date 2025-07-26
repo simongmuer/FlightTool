@@ -8,6 +8,8 @@ import {
   text,
   decimal,
   integer,
+  date,
+  time,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -36,26 +38,23 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Flights table
+// Flights table - updated to match your existing database structure
 export const flights = pgTable("flights", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   userId: varchar("user_id").notNull(),
-  date: timestamp("date").notNull(),
   flightNumber: varchar("flight_number").notNull(),
+  airline: varchar("airline").notNull(),
   fromAirport: varchar("from_airport").notNull(),
   toAirport: varchar("to_airport").notNull(),
-  fromAirportCode: varchar("from_airport_code").default(""),
-  toAirportCode: varchar("to_airport_code").default(""),
-  departureTime: varchar("departure_time").default(""),
-  arrivalTime: varchar("arrival_time").default(""),
-  duration: varchar("duration").default(""),
-  airline: varchar("airline").notNull(),
+  departureDate: date("departure_date").notNull(),
+  departureTime: time("departure_time"),
+  arrivalDate: date("arrival_date").notNull(),
+  arrivalTime: time("arrival_time"),
   aircraftType: varchar("aircraft_type").default(""),
-  registration: varchar("registration").default(""),
   seatNumber: varchar("seat_number").default(""),
-  seatType: varchar("seat_type").default(""),
   flightClass: varchar("flight_class").default(""),
-  flightReason: varchar("flight_reason").default(""),
+  ticketPrice: decimal("ticket_price", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
   notes: text("notes").default(""),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

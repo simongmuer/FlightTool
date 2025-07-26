@@ -44,9 +44,12 @@ export default function AuthPage() {
         title: "Welcome back!",
         description: "Successfully logged in.",
       });
-      // Force immediate redirect after successful login
-      console.log("Redirecting to dashboard...");
-      setLocation("/");
+      // Wait a bit longer for the session to be properly established
+      console.log("Waiting for session to stabilize, then redirecting...");
+      setTimeout(() => {
+        console.log("Redirecting to dashboard...");
+        setLocation("/");
+      }, 500);
     } catch (error) {
       console.error("Login failed:", error);
       // Error handling is done in the mutation

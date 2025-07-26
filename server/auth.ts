@@ -123,7 +123,14 @@ export function setupAuth(app: Express) {
 
       req.login(user, (err) => {
         if (err) return next(err);
-        res.status(201).json({ ...user, password: undefined });
+        // Ensure session is saved before responding
+        req.session.save((saveErr) => {
+          if (saveErr) {
+            console.error("Session save error:", saveErr);
+            return res.status(500).json({ message: "Session save failed" });
+          }
+          res.status(201).json({ ...user, password: undefined });
+        });
       });
     } catch (error) {
       console.error("Registration error:", error);
@@ -133,7 +140,14 @@ export function setupAuth(app: Express) {
 
   // Login route
   app.post("/api/login", passport.authenticate("local"), (req, res) => {
-    res.status(200).json({ ...req.user, password: undefined });
+    // Ensure session is saved before responding
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).json({ message: "Session save failed" });
+      }
+      res.status(200).json({ ...req.user, password: undefined });
+    });
   });
 
   // Logout route

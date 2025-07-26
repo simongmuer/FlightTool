@@ -85,6 +85,14 @@ get_database_config() {
 check_postgresql() {
     log_step "Checking PostgreSQL installation..."
     
+    # Fix locale issues before PostgreSQL operations
+    execute_cmd "export DEBIAN_FRONTEND=noninteractive"
+    execute_cmd "apt-get update && apt-get install -y locales"
+    execute_cmd "locale-gen en_US.UTF-8"
+    execute_cmd "update-locale LANG=en_US.UTF-8"
+    execute_cmd "export LANG=en_US.UTF-8"
+    execute_cmd "export LC_ALL=en_US.UTF-8"
+    
     if execute_cmd "command -v psql > /dev/null"; then
         log_info "PostgreSQL is installed"
         
@@ -98,10 +106,16 @@ check_postgresql() {
     else
         log_info "Installing PostgreSQL..."
         execute_cmd "apt update"
-        execute_cmd "apt install -y postgresql postgresql-contrib"
+        execute_cmd "DEBIAN_FRONTEND=noninteractive apt install -y postgresql postgresql-contrib locales"
         execute_cmd "systemctl start postgresql"
         execute_cmd "systemctl enable postgresql"
+        
+        # Wait for PostgreSQL to be ready
+        sleep 5
     fi
+    
+    # Ensure PostgreSQL is actually ready
+    execute_cmd "timeout 30 bash -c 'until pg_isready; do sleep 1; done'"
 }
 
 # Setup local PostgreSQL database
@@ -116,19 +130,30 @@ setup_local_database() {
         exit 1
     fi
     
+    # Fix locale warnings first
+    log_info "Configuring system locale..."
+    execute_cmd "export DEBIAN_FRONTEND=noninteractive"
+    execute_cmd "locale-gen en_US.UTF-8 || true"
+    execute_cmd "update-locale LANG=en_US.UTF-8 || true"
+    execute_cmd "export LANG=en_US.UTF-8"
+    execute_cmd "export LC_ALL=en_US.UTF-8"
+    
     log_info "Creating database and user..."
     
-    # Create database and user
+    # First, terminate any existing connections to the database
+    execute_cmd "sudo -u postgres psql -c \"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'flighttool' AND pid <> pg_backend_pid();\" || true"
+    
+    # Create database and user with proper error handling
     execute_cmd "sudo -u postgres psql << 'EOF'
 -- Drop existing database and user if they exist
 DROP DATABASE IF EXISTS flighttool;
-DROP USER IF EXISTS flighttool;
+DROP ROLE IF EXISTS flighttool;
 
 -- Create new database and user
-CREATE DATABASE flighttool;
-CREATE USER flighttool WITH PASSWORD '$DB_PASSWORD';
+CREATE ROLE flighttool WITH LOGIN PASSWORD '$DB_PASSWORD';
+ALTER ROLE flighttool CREATEDB;
+CREATE DATABASE flighttool OWNER flighttool;
 GRANT ALL PRIVILEGES ON DATABASE flighttool TO flighttool;
-ALTER USER flighttool CREATEDB;
 \\q
 EOF"
     

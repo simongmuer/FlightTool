@@ -1,37 +1,37 @@
-import { createContext, ReactNode, useContext } from "react";
+import React, { createContext, ReactNode, useContext } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient, getQueryFn } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { User } from "@shared/schema";
 
-type LoginData = {
+interface LoginData {
   username: string;
   password: string;
-};
+}
 
-type RegisterData = {
+interface RegisterData {
   username: string;
   password: string;
   email?: string;
   firstName?: string;
   lastName?: string;
-};
+}
 
-type AuthContextType = {
+interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   error: Error | null;
   loginMutation: any;
   logoutMutation: any;
   registerMutation: any;
-};
+}
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider(props: { children: ReactNode }) {
   const { toast } = useToast();
   
-  const { data: user, error, isLoading } = useQuery<User | undefined, Error>({
+  const { data: user, error, isLoading } = useQuery({
     queryKey: ["/api/auth/user"],
     queryFn: getQueryFn({ on401: "returnNull" }),
     retry: false,
@@ -88,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const authValue = {
+  const contextValue = {
     user: user ?? null,
     isLoading,
     error,
@@ -97,11 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     registerMutation,
   };
 
-  return (
-    <AuthContext.Provider value={authValue}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return React.createElement(AuthContext.Provider, { value: contextValue }, props.children);
 }
 
 export function useAuth() {

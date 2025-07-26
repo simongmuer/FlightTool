@@ -295,10 +295,20 @@ EOF"
         fi
     fi
     
-    # Set proper ownership and permissions
-    pct exec "$CONTAINER_ID" -- chown -R flighttool:flighttool /home/flighttool/app
+    # Set proper ownership and permissions with comprehensive fixes
+    pct exec "$CONTAINER_ID" -- chown -R flighttool:flighttool /home/flighttool
+    pct exec "$CONTAINER_ID" -- chmod -R 755 /home/flighttool
     pct exec "$CONTAINER_ID" -- chmod -R 755 /home/flighttool/app
-    pct exec "$CONTAINER_ID" -- chmod -R 644 /home/flighttool/app/node_modules 2>/dev/null || true
+    
+    # Fix specific file permissions
+    if pct exec "$CONTAINER_ID" -- test -f /home/flighttool/app/.env; then
+        pct exec "$CONTAINER_ID" -- chmod 644 /home/flighttool/app/.env
+        pct exec "$CONTAINER_ID" -- chown flighttool:flighttool /home/flighttool/app/.env
+    fi
+    
+    # Fix npm global directory permissions
+    pct exec "$CONTAINER_ID" -- mkdir -p /home/flighttool/.npm
+    pct exec "$CONTAINER_ID" -- chown -R flighttool:flighttool /home/flighttool/.npm
 }
 
 # Create fallback build script if needed
@@ -494,9 +504,10 @@ LimitNOFILE=65536
 WantedBy=multi-user.target
 EOF"
     
-    # Ensure proper ownership after service file creation
+    # Ensure proper ownership and permissions after service file creation
     pct exec "$CONTAINER_ID" -- chown -R flighttool:flighttool /home/flighttool/app
-    pct exec "$CONTAINER_ID" -- chmod 755 /home/flighttool/app
+    pct exec "$CONTAINER_ID" -- chmod -R 755 /home/flighttool/app
+    pct exec "$CONTAINER_ID" -- chmod 644 /home/flighttool/app/.env 2>/dev/null || true
     
     pct exec "$CONTAINER_ID" -- systemctl daemon-reload
     pct exec "$CONTAINER_ID" -- systemctl enable flighttool

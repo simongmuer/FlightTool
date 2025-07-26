@@ -239,10 +239,15 @@ MemoryLimit=2G
 WantedBy=multi-user.target
 EOF
 
-# Set proper ownership and permissions
-chown -R flighttool:flighttool /home/flighttool/app
+# Set proper ownership and permissions (comprehensive fix)
+chown -R flighttool:flighttool /home/flighttool
+chmod -R 755 /home/flighttool
 chmod -R 755 /home/flighttool/app
 chmod 644 /home/flighttool/app/.env
+
+# Fix npm permissions
+mkdir -p /home/flighttool/.npm
+chown -R flighttool:flighttool /home/flighttool/.npm
 
 # Reload systemd and start service
 systemctl daemon-reload

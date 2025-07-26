@@ -244,8 +244,10 @@ MemoryLimit=2G
 WantedBy=multi-user.target
 EOF
 
-# Set proper ownership
+# Set proper ownership and permissions
 chown -R flighttool:flighttool /home/flighttool/app
+chmod -R 755 /home/flighttool/app
+chmod 644 /home/flighttool/app/.env
 
 # Reload systemd and start service
 systemctl daemon-reload

@@ -286,8 +286,10 @@ EOF"
         pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm prune --production"
     fi
     
-    # Set ownership
+    # Set proper ownership and permissions
     pct exec "$CONTAINER_ID" -- chown -R flighttool:flighttool /home/flighttool/app
+    pct exec "$CONTAINER_ID" -- chmod -R 755 /home/flighttool/app
+    pct exec "$CONTAINER_ID" -- chmod -R 644 /home/flighttool/app/node_modules 2>/dev/null || true
 }
 
 # Create systemd service
@@ -324,6 +326,10 @@ LimitNOFILE=65536
 [Install]
 WantedBy=multi-user.target
 EOF"
+    
+    # Ensure proper ownership after service file creation
+    pct exec "$CONTAINER_ID" -- chown -R flighttool:flighttool /home/flighttool/app
+    pct exec "$CONTAINER_ID" -- chmod 755 /home/flighttool/app
     
     pct exec "$CONTAINER_ID" -- systemctl daemon-reload
     pct exec "$CONTAINER_ID" -- systemctl enable flighttool

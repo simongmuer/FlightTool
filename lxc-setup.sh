@@ -168,11 +168,14 @@ EOF"
     
     # Install dependencies and build (if package.json exists)
     if lxc exec "$CONTAINER_NAME" -- test -f /opt/flighttool/package.json; then
-        log_info "Installing application dependencies..."
-        lxc exec "$CONTAINER_NAME" -- bash -c "cd /opt/flighttool && npm install --production"
+        log_info "Installing all dependencies (including dev dependencies for build)..."
+        lxc exec "$CONTAINER_NAME" -- bash -c "cd /opt/flighttool && npm install"
         
         log_info "Building application..."
         lxc exec "$CONTAINER_NAME" -- bash -c "cd /opt/flighttool && npm run build"
+        
+        log_info "Cleaning dev dependencies..."
+        lxc exec "$CONTAINER_NAME" -- bash -c "cd /opt/flighttool && npm prune --production"
         
         log_info "Running database migrations..."
         lxc exec "$CONTAINER_NAME" -- bash -c "cd /opt/flighttool && npm run db:push"

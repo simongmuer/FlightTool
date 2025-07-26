@@ -180,8 +180,8 @@ cd /home/flighttool/app
 # Clone repository (replace with your actual repository)
 git clone https://github.com/yourusername/flighttool.git .
 
-# Install dependencies
-npm install --production
+# Install all dependencies (including dev dependencies needed for build)
+npm install
 
 # Create environment configuration
 cat > .env << 'EOF'
@@ -194,6 +194,9 @@ EOF
 
 # Build application
 npm run build
+
+# Remove dev dependencies after build (optional, saves space)
+npm prune --production
 
 # Run database migrations
 npm run db:push

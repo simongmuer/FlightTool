@@ -273,11 +273,14 @@ EOF"
     
     # Install dependencies and build
     if pct exec "$CONTAINER_ID" -- test -f /home/flighttool/app/package.json; then
-        log_info "Installing dependencies..."
-        pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm install --production"
+        log_info "Installing all dependencies (including dev dependencies for build)..."
+        pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm install"
         
         log_info "Building application..."
         pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm run build"
+        
+        log_info "Cleaning dev dependencies..."
+        pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm prune --production"
         
         log_info "Running database migrations..."
         pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm run db:push"

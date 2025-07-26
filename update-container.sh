@@ -30,7 +30,7 @@ log_error() {
 
 # Default values
 CONTAINER_ID="${1:-120}"
-APP_REPO="${2:-https://github.com/your-username/flighttool.git}"
+APP_REPO="${2}"
 APP_DIR="/home/flighttool/app"
 BACKUP_DIR="/home/flighttool/backup"
 
@@ -90,8 +90,9 @@ update_codebase() {
         # Remove old application directory
         pct exec "$CONTAINER_ID" -- rm -rf "$APP_DIR"
         
-        # Clone fresh copy
-        pct exec "$CONTAINER_ID" -- git clone "$APP_REPO" "$APP_DIR"
+        # Clone fresh copy (public repository, no authentication needed)
+        log_info "Cloning public repository: $APP_REPO"
+        pct exec "$CONTAINER_ID" -- git clone --depth 1 "$APP_REPO" "$APP_DIR"
         
         # Set ownership
         pct exec "$CONTAINER_ID" -- chown -R flighttool:flighttool "$APP_DIR"
@@ -139,12 +140,17 @@ install_and_build() {
     # Create environment file if it doesn't exist
     if ! pct exec "$CONTAINER_ID" -- test -f "$APP_DIR/.env"; then
         log_info "Creating environment configuration..."
-        pct exec "$CONTAINER_ID" -- bash -c "cat > '$APP_DIR/.env' << 'EOF'
+        # Try to copy from example first, then create basic one
+        if pct exec "$CONTAINER_ID" -- test -f "$APP_DIR/.env.example"; then
+            pct exec "$CONTAINER_ID" -- cp "$APP_DIR/.env.example" "$APP_DIR/.env"
+        else
+            pct exec "$CONTAINER_ID" -- bash -c "cat > '$APP_DIR/.env' << 'EOF'
 NODE_ENV=production
 DATABASE_URL=postgresql://flighttool:\$(cat /etc/flighttool-db-password 2>/dev/null || echo 'default_password')@localhost:5432/flighttool
 SESSION_SECRET=\$(openssl rand -base64 32)
 PORT=3000
 EOF"
+        fi
     fi
     
     # Build application
@@ -230,7 +236,7 @@ print_usage() {
     echo ""
     echo "Options:"
     echo "  container_id      Container ID (default: 120)"
-    echo "  repository_url    Git repository URL to update from"
+    echo "  repository_url    Public Git repository URL (HTTPS only, no auth required)"
     echo "  --local <dir>     Update from local directory instead of git"
     echo "  --rollback        Rollback to previous version"
     echo ""
@@ -238,6 +244,8 @@ print_usage() {
     echo "  $0 120 https://github.com/user/flighttool.git"
     echo "  $0 120 --local /path/to/flighttool"
     echo "  $0 120 --rollback"
+    echo ""
+    echo "Note: Only public repositories are supported (no authentication required)"
 }
 
 # Main execution

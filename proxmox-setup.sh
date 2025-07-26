@@ -261,6 +261,16 @@ deploy_application() {
         return 0
     fi
     
+    # Copy build script to container
+    log_info "Copying production build script..."
+    if [ -f "build-production.sh" ]; then
+        pct push "$CONTAINER_ID" build-production.sh /home/flighttool/app/build-production.sh
+        pct exec "$CONTAINER_ID" -- chmod +x /home/flighttool/app/build-production.sh
+    else
+        log_warn "build-production.sh not found locally, creating fallback build script..."
+        create_fallback_build_script
+    fi
+    
     # Create environment file
     log_info "Creating environment configuration..."
     pct exec "$CONTAINER_ID" -- bash -c "cat > /home/flighttool/app/.env << 'EOF'
@@ -285,6 +295,104 @@ EOF"
     pct exec "$CONTAINER_ID" -- chown -R flighttool:flighttool /home/flighttool/app
     pct exec "$CONTAINER_ID" -- chmod -R 755 /home/flighttool/app
     pct exec "$CONTAINER_ID" -- chmod -R 644 /home/flighttool/app/node_modules 2>/dev/null || true
+}
+
+# Create fallback build script if needed
+create_fallback_build_script() {
+    log_info "Creating production build script in container..."
+    pct exec "$CONTAINER_ID" -- bash -c "cat > /home/flighttool/app/build-production.sh << 'EOFSCRIPT'
+#!/bin/bash
+# Production build script for FlightTool
+set -e
+
+echo \"Building FlightTool for production...\"
+
+# Clean existing build
+rm -rf dist
+
+# Install dependencies
+npm install
+
+# Build frontend
+npm run build 2>/dev/null
+
+# Create production server that doesn't import Vite
+mkdir -p dist
+
+cat > dist/index.js << 'EOF'
+import express from \"express\";
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+import fs from 'fs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// Simple logging
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on(\"finish\", () => {
+    const duration = Date.now() - start;
+    if (req.path.startsWith(\"/api\")) {
+      console.log(\`\${new Date().toLocaleTimeString()} [express] \${req.method} \${req.path} \${res.statusCode} in \${duration}ms\`);
+    }
+  });
+  next();
+});
+
+// Import routes
+import('./routes.js').then(({ registerRoutes }) => {
+  registerRoutes(app).then((server) => {
+    const distPath = resolve(__dirname, \"public\");
+    
+    if (!fs.existsSync(distPath)) {
+      throw new Error(\`Build directory not found: \${distPath}\`);
+    }
+    
+    app.use(express.static(distPath));
+    app.get(\"*\", (req, res) => {
+      res.sendFile(resolve(distPath, \"index.html\"));
+    });
+    
+    const port = parseInt(process.env.PORT || '3000', 10);
+    server.listen(port, \"0.0.0.0\", () => {
+      console.log(\`\${new Date().toLocaleTimeString()} [express] serving on port \${port}\`);
+    });
+  });
+}).catch(err => {
+  console.error('Server startup failed:', err);
+  process.exit(1);
+});
+EOF
+
+# Build server modules
+npx esbuild server/routes.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/routes.js --external:express --external:openid-client --external:passport* --external:drizzle-orm --external:postgres --external:connect-pg-simple --external:express-session --external:memoizee --external:multer --external:csv-parser
+npx esbuild server/storage.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/storage.js --external:drizzle-orm --external:postgres
+npx esbuild server/db.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/db.js --external:drizzle-orm --external:postgres --external:@neondatabase/serverless
+npx esbuild server/replitAuth.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/replitAuth.js --external:openid-client --external:passport* --external:express-session --external:connect-pg-simple --external:memoizee
+
+# Copy shared schema
+mkdir -p dist/shared
+cp shared/schema.ts dist/shared/
+
+# Run migrations
+if [ -n \"\$DATABASE_URL\" ]; then
+  npm run db:push
+fi
+
+# Clean dev dependencies if requested
+if [ \"\$CLEAN_DEV_DEPS\" = \"true\" ]; then
+  npm prune --production
+fi
+
+echo \"Production build completed successfully\"
+EOFSCRIPT"
+    
+    pct exec "$CONTAINER_ID" -- chmod +x /home/flighttool/app/build-production.sh
 }
 
 # Create systemd service

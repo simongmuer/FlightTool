@@ -111,11 +111,11 @@ EOF
 # Build application
 npm run build
 
-# Remove dev dependencies after build
-npm prune --production
-
-# Run database migrations
+# Run database migrations (before removing dev dependencies)
 npm run db:push
+
+# Remove dev dependencies after build and migrations
+npm prune --production
 
 # Create application user
 useradd -r -s /bin/false flighttool

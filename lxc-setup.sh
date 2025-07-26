@@ -174,11 +174,11 @@ EOF"
         log_info "Building application..."
         lxc exec "$CONTAINER_NAME" -- bash -c "cd /opt/flighttool && npm run build"
         
-        log_info "Cleaning dev dependencies..."
-        lxc exec "$CONTAINER_NAME" -- bash -c "cd /opt/flighttool && npm prune --production"
-        
         log_info "Running database migrations..."
         lxc exec "$CONTAINER_NAME" -- bash -c "cd /opt/flighttool && npm run db:push"
+        
+        log_info "Cleaning dev dependencies..."
+        lxc exec "$CONTAINER_NAME" -- bash -c "cd /opt/flighttool && npm prune --production"
     fi
     
     # Create application user

@@ -279,11 +279,11 @@ EOF"
         log_info "Building application..."
         pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm run build"
         
-        log_info "Cleaning dev dependencies..."
-        pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm prune --production"
-        
         log_info "Running database migrations..."
         pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm run db:push"
+        
+        log_info "Cleaning dev dependencies..."
+        pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm prune --production"
     fi
     
     # Set ownership

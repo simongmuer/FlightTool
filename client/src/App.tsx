@@ -30,6 +30,7 @@ function Router() {
         <>
           <Route path="/auth" component={AuthPage} />
           <Route path="/" component={AuthPage} />
+          <Route path="*" component={AuthPage} />
         </>
       ) : (
         <>
@@ -38,9 +39,9 @@ function Router() {
           <Route path="/map" component={FlightMap} />
           <Route path="/add-flight" component={AddFlight} />
           <Route path="/import" component={ImportCSV} />
+          <Route path="*" component={NotFound} />
         </>
       )}
-      <Route component={NotFound} />
     </Switch>
   );
 }

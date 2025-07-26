@@ -68,7 +68,7 @@ export function AuthProvider(props: { children: ReactNode }) {
       // Force a refetch to ensure the session is properly established after registration
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      }, 200);
+      }, 100);
     },
     onError: (error: Error) => {
       toast({

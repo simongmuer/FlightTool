@@ -16,7 +16,7 @@ export default function AuthPage() {
 
   // Redirect if already authenticated
   if (!isLoading && user) {
-    setLocation("/");
+    setTimeout(() => setLocation("/"), 0);
     return null;
   }
 
@@ -41,10 +41,7 @@ export default function AuthPage() {
         title: "Welcome back!",
         description: "Successfully logged in.",
       });
-      // Wait a bit for the auth context to update before redirecting
-      setTimeout(() => {
-        setLocation("/");
-      }, 300);
+      // The app will automatically redirect when user becomes truthy
     } catch (error) {
       // Error handling is done in the mutation
     }
@@ -58,10 +55,7 @@ export default function AuthPage() {
         title: "Welcome to FlightTool!",
         description: "Account created successfully.",
       });
-      // Wait a bit for the auth context to update before redirecting
-      setTimeout(() => {
-        setLocation("/");
-      }, 300);
+      // The app will automatically redirect when user becomes truthy
     } catch (error) {
       // Error handling is done in the mutation
     }

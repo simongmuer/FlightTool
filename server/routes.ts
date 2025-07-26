@@ -200,7 +200,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 }
 
 // Helper function to extract airport code from airport string
-function extractAirportCode(airportString: string): string | null {
-  const match = airportString.match(/\(([A-Z]{3})\//);
-  return match ? match[1] : null;
+function extractAirportCode(airportString: string): string {
+  const match = airportString.match(/\(([A-Z]{3})\)/);
+  return match ? match[1] : "";
 }

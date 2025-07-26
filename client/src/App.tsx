@@ -29,11 +29,12 @@ function Router() {
       {!user ? (
         <>
           <Route path="/auth" component={AuthPage} />
-          <Route path="/" component={AuthPage} />
-          <Route path="*" component={AuthPage} />
+          <Route path="/" component={Landing} />
+          <Route path="*" component={Landing} />
         </>
       ) : (
         <>
+          <Route path="/auth" component={Dashboard} />
           <Route path="/" component={Dashboard} />
           <Route path="/flights" component={Flights} />
           <Route path="/map" component={FlightMap} />

@@ -155,8 +155,8 @@ export class DatabaseStorage implements IStorage {
     // Get unique airports visited
     const airportsVisitedResult = await db
       .selectDistinct({ 
-        fromAirport: flights.fromAirportCode,
-        toAirport: flights.toAirportCode 
+        fromAirport: flights.fromAirport,
+        toAirport: flights.toAirport 
       })
       .from(flights)
       .where(eq(flights.userId, userId));

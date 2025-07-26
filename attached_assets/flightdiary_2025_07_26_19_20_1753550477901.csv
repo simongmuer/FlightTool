@@ -1,0 +1,81 @@
+
+Date,"Flight number",From,To,"Dep time","Arr time",Duration,Airline,Aircraft,Registration,"Seat number","Seat type","Flight class","Flight reason",Note,Dep_id,Arr_id,Airline_id,Aircraft_id
+2024-12-28,AA2785,"Las Vegas / McCarran (LAS/KLAS)","Los Angeles / Los Angeles International (LAX/KLAX)",18:00:00,19:17:00,01:17:00,"American Airlines (AA/AAL)","Airbus A321neo (A21N)",N418AN,4A,1,2,1,,1557,1559,4,2128
+2024-12-26,AA3197,"Los Angeles / Los Angeles International (LAX/KLAX)","Las Vegas / McCarran (LAS/KLAS)",19:45:00,21:00:00,01:15:00,"American Airlines (AA/AAL)","Airbus A321 (A321)",N919US,3A,1,2,1,,1559,1557,4,28
+2024-12-26,LH452,"Munich / Franz Josef Strauss (MUC/EDDM)","Los Angeles / Los Angeles International (LAX/KLAX)",12:00:00,15:15:00,12:15:00,"Lufthansa (LH/DLH)","Airbus A380-800 (A388)",D-AIMC,2K,1,3,1,,1952,1559,239,39
+2024-12-30,LH457,"Los Angeles / Los Angeles International (LAX/KLAX)","Frankfurt am Main / Frankfurt (FRA/EDDF)",15:05:00,11:00:00,10:55:00,"Lufthansa (LH/DLH)","Boeing 747-8 (B748)",D-ABYQ,3A,1,3,1,,1559,919,239,2104
+2024-12-31,LH106,"Frankfurt am Main / Frankfurt (FRA/EDDF)","Munich / Franz Josef Strauss (MUC/EDDM)",13:15:00,14:10:00,00:55:00,"Lufthansa (LH/DLH)","Boeing 787-9 (B789)",D-ABPA,,1,2,1,,919,1952,239,2088
+2024-12-22,LH1190,"Frankfurt am Main / Frankfurt (FRA/EDDF)","Zurich / Kloten (ZRH/LSZH)",12:50:00,13:45:00,00:55:00,"Lufthansa (LH/DLH)","Bombardier CRJ-900 (CRJ9)",D-ACNB,,1,1,1,,919,3548,239,531
+2024-12-21,LH1191,"Zurich / Kloten (ZRH/LSZH)","Frankfurt am Main / Frankfurt (FRA/EDDF)",14:45:00,15:50:00,01:05:00,"Lufthansa (LH/DLH)","Airbus A320 (A320)",D-AIZR,,1,1,1,,3548,919,239,27
+2024-11-24,LX1069,"Frankfurt am Main / Frankfurt (FRA/EDDF)","Zurich / Kloten (ZRH/LSZH)",09:05:00,10:05:00,01:00:00,"Swiss International Airlines (LX/SWR)","Embraer Embraer E195-E2 (E295)",HB-AZC,,1,1,1,,919,3548,741,2147
+2024-11-22,LH1197,"Zurich / Kloten (ZRH/LSZH)","Frankfurt am Main / Frankfurt (FRA/EDDF)",18:05:00,19:10:00,01:05:00,"Lufthansa (LH/DLH)","Airbus A321-200 (A321)",D-AIRY,,1,1,1,,3548,919,239,2076
+2024-09-16,LH1186,"Frankfurt am Main / Frankfurt (FRA/EDDF)","Zurich / Kloten (ZRH/LSZH)",09:45:00,10:40:00,00:55:00,"Lufthansa (LH/DLH)","Airbus A319neo (A19N)",D-AILN,,1,1,1,,919,3548,239,2126
+2024-09-15,LH77,"Dusseldorf / Dusseldorf International (DUS/EDDL)","Frankfurt am Main / Frankfurt (FRA/EDDF)",10:35:00,11:30:00,00:55:00,"Lufthansa (LH/DLH)","Airbus A320 (A320)",D-AIZA,,1,1,1,,763,919,239,27
+2024-09-14,EW9763,"Zurich / Kloten (ZRH/LSZH)","Dusseldorf / Dusseldorf International (DUS/EDDL)",09:09:00,10:26:00,01:17:00,"Eurowings (EW/EWG)","Airbus A319 (A319)",D-AGWY,,1,1,1,,3548,763,282,26
+2024-06-01,LX1072,"Zurich / Kloten (ZRH/LSZH)","Frankfurt am Main / Frankfurt (FRA/EDDF)",13:06:00,14:05:00,00:59:00,"Swiss International Airlines (LX/SWR)","Embraer E190-E2 (E290)",HB-JVY,,1,1,1,,3548,919,741,2139
+2024-06-02,LX1069,"Frankfurt am Main / Frankfurt (FRA/EDDF)","Zurich / Kloten (ZRH/LSZH)",09:05:00,10:05:00,01:00:00,"Swiss International Airlines (LX/SWR)","Embraer Embraer E195-E2 (E295)",HB-AZK,,1,1,1,,919,3548,741,2147
+2024-05-22,LH1191,"Zurich / Kloten (ZRH/LSZH)","Frankfurt am Main / Frankfurt (FRA/EDDF)",14:45:00,15:50:00,01:05:00,"Lufthansa (LH/DLH)","Airbus A320 (A320)",D-AIZB,,1,2,1,,3548,919,239,27
+2024-05-23,4Y1204,"Frankfurt am Main / Frankfurt (FRA/EDDF)","Iraklion / Nikos Kazantzakis (HER/LGIR)",14:18:00,18:20:00,03:02:00,"Blue Line (4Y/BLE)","Airbus A320 (A320)",D-AIUR,,1,2,1,,919,1112,1318,27
+2024-05-27,WK349,"Iraklion / Nikos Kazantzakis (HER/LGIR)","Zurich / Kloten (ZRH/LSZH)",10:45:00,12:42:00,02:57:00,"Edelweiss Air (WK/EDW)","Airbus A320-100 (A320)",HB-JLP,,1,2,1,,1112,3548,1726,2058
+2023-10-02,LX1019,"Dusseldorf / Dusseldorf International (DUS/EDDL)","Zurich / Kloten (ZRH/LSZH)",14:45:00,16:00:00,01:15:00,"Swiss International Airlines (LX/SWR)","Embraer Embraer E195-E2 (E295)",HB-JVM,,1,1,1,,763,3548,741,2147
+2023-09-29,LX1026,"Zurich / Kloten (ZRH/LSZH)","Dusseldorf / Dusseldorf International (DUS/EDDL)",17:40:00,18:55:00,01:15:00,"Swiss International Airlines (LX/SWR)","Airbus A320 (A320)",HB-JLQ,,1,1,1,,3548,763,741,27
+2023-06-22,WK285,"Funchal / Madeira (FNC/LPMA)","Zurich / Kloten (ZRH/LSZH)",10:14:00,14:47:00,03:33:00,"Edelweiss Air (WK/EDW)","Airbus A320 (A320)",HB-IJU,,1,2,1,,3584,3548,1726,27
+2023-06-19,TP1689,"Lisbon / Portela (LIS/LPPT)","Funchal / Madeira (FNC/LPMA)",20:24:00,22:06:00,01:42:00,"TAP Air Portugal (TP/TAP)","Airbus A321LR (A21N)",CS-TJO,,1,2,1,,1632,3584,753,2181
+2023-06-19,TP6970,"Munich / Franz Josef Strauss (MUC/EDDM)","Lisbon / Portela (LIS/LPPT)",14:11:00,16:24:00,03:13:00,"TAP Air Portugal (TP/TAP)","Airbus A321 (A321)",CS-TNM,,1,2,1,,1952,1632,753,28
+2023-06-17,LH2371,"Zurich / Kloten (ZRH/LSZH)","Munich / Franz Josef Strauss (MUC/EDDM)",16:55:00,17:50:00,00:55:00,"Lufthansa (LH/DLH)","Airbus A319neo (A19N)",D-AILY,,1,2,1,,3548,1952,239,2126
+2021-08-26,WK215,"Tenerife-South / Reina Sofia (TFS/GCTS)","Zurich / Kloten (ZRH/LSZH)",17:38:00,22:46:00,04:08:00,"Edelweiss Air (WK/EDW)","Airbus A320 (A320)",HB-JJK,,1,2,1,,2897,3548,1726,27
+2019-08-15,LX1018,"Zurich / Kloten (ZRH/LSZH)","Dusseldorf / Dusseldorf International (DUS/EDDL)",12:45:00,14:05:00,01:20:00,"Swiss International Airlines (LX/SWR)","Airbus A220-300 (BCS3)",HB-JCC,,1,1,1,,3548,763,741,2142
+2019-08-17,LX1013,"Dusseldorf / Dusseldorf International (DUS/EDDL)","Zurich / Kloten (ZRH/LSZH)",10:53:00,12:02:00,01:09:00,"Swiss International Airlines (LX/SWR)","Airbus A220-300 (BCS3)",HB-JCG,,1,1,1,,763,3548,741,2142
+2019-01-28,LX5783,"Zurich / Kloten (ZRH/LSZH)","Munich / Franz Josef Strauss (MUC/EDDM)",07:43:00,08:40:00,00:57:00,"Swiss International Airlines (LX/SWR)","Embraer E190-E2 (E290)",HB-JVQ,,1,1,2,,3548,1952,741,2139
+2019-01-28,LH428,"Munich / Franz Josef Strauss (MUC/EDDM)","Charlotte / Douglas (CLT/KCLT)",12:55:00,16:55:00,10:00:00,"Lufthansa (LH/DLH)","Airbus A330-300 (A333)",D-AIKL,,1,4,2,,1952,575,239,31
+2019-02-07,LH411,"New York / John F Kennedy (JFK/KJFK)","Munich / Franz Josef Strauss (MUC/EDDM)",17:30:00,07:00:00,07:30:00,"Lufthansa (LH/DLH)","Airbus A340-600 (A346)",D-AIHK,,1,4,2,,1328,1952,239,36
+2019-02-08,LX5782,"Munich / Franz Josef Strauss (MUC/EDDM)","Zurich / Kloten (ZRH/LSZH)",09:33:00,10:24:00,00:51:00,"Swiss International Airlines (LX/SWR)","Airbus A320 (A320)",HB-IJM,,1,1,2,,1952,3548,741,27
+2018-09-28,LX155,"Mumbai / Chhatrapati Shivaji (BOM/VABB)","Zurich / Kloten (ZRH/LSZH)",01:20:00,06:10:00,07:50:00,"Swiss International Airlines (LX/SWR)","Airbus A330-300 (A333)",HB-JHF,,1,2,2,,375,3548,741,31
+2018-09-24,LX154,"Zurich / Kloten (ZRH/LSZH)","Mumbai / Chhatrapati Shivaji (BOM/VABB)",09:45:00,22:30:00,09:45:00,"Swiss International Airlines (LX/SWR)","Airbus A330-300 (A333)",HB-JHI,,1,2,1,,3548,375,741,31
+2018-07-10,LX728,"Zurich / Kloten (ZRH/LSZH)","Amsterdam / Schiphol (AMS/EHAM)",12:45:00,14:25:00,01:40:00,"Swiss International Airlines (LX/SWR)","Airbus A320 (A320)",HB-JLS,,1,1,2,,3548,122,741,27
+2019-10-06,LX457,"London / London City (LCY/EGLC)","Zurich / Kloten (ZRH/LSZH)",13:20:00,16:00:00,01:40:00,"Swiss International Airlines (LX/SWR)","Embraer E190-E2 (E290)",HB-JVP,,1,1,1,,1581,3548,741,2139
+2019-10-04,LX456,"Zurich / Kloten (ZRH/LSZH)","London / London City (LCY/EGLC)",12:10:00,12:50:00,01:40:00,"Swiss International Airlines (LX/SWR)","Airbus A220-100 (BCS1)",HB-JBH,,1,1,1,,3548,1581,741,2155
+2019-10-03,WK267,"Ibiza / Ibiza (IBZ/LEIB)","Zurich / Kloten (ZRH/LSZH)",18:25:00,20:25:00,02:00:00,"Edelweiss Air (WK/EDW)","Airbus A320 (A320)",HB-JJN,,1,2,1,,1209,3548,1726,27
+2019-09-30,LX2340,"Geneva / Cointrin (GVA/LSGG)","Ibiza / Ibiza (IBZ/LEIB)",19:04:00,20:39:00,01:35:00,"Swiss International Airlines (LX/SWR)","Airbus A220-300 (BCS3)",HB-JCQ,,1,2,1,,1065,1209,741,2142
+2019-09-30,LX2808,"Zurich / Kloten (ZRH/LSZH)","Geneva / Cointrin (GVA/LSGG)",16:45:00,17:35:00,00:50:00,"Swiss International Airlines (LX/SWR)","Airbus A320 (A320)",HB-IJM,,1,2,1,,3548,1065,741,27
+2019-08-30,LX15,"New York / John F Kennedy (JFK/KJFK)","Zurich / Kloten (ZRH/LSZH)",21:00:00,10:40:00,07:40:00,"Swiss International Airlines (LX/SWR)","Airbus A330-300 (A333)",HB-JHF,,1,4,2,,1328,3548,741,31
+2019-08-25,LX14,"Zurich / Kloten (ZRH/LSZH)","New York / John F Kennedy (JFK/KJFK)",13:15:00,16:40:00,09:25:00,"Swiss International Airlines (LX/SWR)","Airbus A330-300 (A333)",HB-JHE,,1,4,2,,3548,1328,741,31
+2018-01-30,LH2367,"Zurich / Kloten (ZRH/LSZH)","Munich / Franz Josef Strauss (MUC/EDDM)",09:25:00,10:20:00,00:55:00,"Lufthansa (LH/DLH)","Bombardier CRJ-900 (CRJ9)",D-ACKB,,1,1,2,,3548,1952,239,531
+2018-01-30,LH428,"Munich / Franz Josef Strauss (MUC/EDDM)","Charlotte / Douglas (CLT/KCLT)",12:55:00,16:55:00,10:00:00,"Lufthansa (LH/DLH)","Airbus A330-300 (A333)",D-AIKC,,1,4,2,,1952,575,239,31
+2019-02-01,DL2638,"Charlotte / Douglas (CLT/KCLT)","New York / John F Kennedy (JFK/KJFK)",18:18:00,20:19:00,02:01:00,"Delta Air Lines (DL/DAL)","Airbus A320 (A320)",N330NW,,3,1,2,,575,1328,223,27
+2018-10-05,OS552,"Zurich / Kloten (ZRH/LSZH)","Vienna / Schwechat (VIE/LOWW)",10:40:00,12:00:00,01:20:00,"Austrian Airlines (OS/AUA)","Airbus A320-200 (A320)",OE-LBT,,1,1,1,,3548,3179,87,2059
+2018-10-07,LX1583,"Vienna / Schwechat (VIE/LOWW)","Zurich / Kloten (ZRH/LSZH)",20:15:00,21:35:00,01:20:00,"Swiss International Airlines (LX/SWR)","Airbus A320-200 (A320)",HB-IJQ,,1,1,1,,3179,3548,741,2059
+2017-10-06,LX1056,"Zurich / Kloten (ZRH/LSZH)","Hamburg / Fuhlsbuttel (HAM/EDDH)",12:40:00,14:10:00,01:30:00,"Swiss International Airlines (LX/SWR)","Airbus A321 (A321)",HB-IOM,,1,1,1,,3548,1093,741,28
+2017-10-08,LX1059,"Hamburg / Fuhlsbuttel (HAM/EDDH)","Zurich / Kloten (ZRH/LSZH)",18:50:00,20:15:00,01:25:00,"Swiss International Airlines (LX/SWR)","Airbus A319 (A319)",HB-IPY,,1,1,1,,1093,3548,741,26
+2019-04-17,EK206,"New York / John F Kennedy (JFK/KJFK)","Milan / Malpensa (MXP/LIMC)",22:20:00,11:55:00,07:35:00,"Emirates (EK/UAE)","Airbus A380-800 (A388)",A6-EEC,,1,2,2,,1328,1983,807,39
+2019-04-08,EK205,"Milan / Malpensa (MXP/LIMC)","New York / John F Kennedy (JFK/KJFK)",15:40:00,18:55:00,09:15:00,"Emirates (EK/UAE)","Airbus A380-800 (A388)",A6-EOU,,1,2,2,,1983,1328,807,39
+2019-11-04,LX1954,"Zurich / Kloten (ZRH/LSZH)","Barcelona / El Prat (BCN/LEBL)",12:23:00,14:04:00,01:41:00,"Swiss International Airlines (LX/SWR)","Airbus A321 (A321)",HB-ION,,1,1,2,,3548,239,741,28
+2019-11-07,LX1957,"Barcelona / El Prat (BCN/LEBL)","Zurich / Kloten (ZRH/LSZH)",20:43:00,22:19:00,01:36:00,"Swiss International Airlines (LX/SWR)","Airbus A321 (A321)",HB-IOD,,1,1,2,,239,3548,741,28
+2022-05-24,WK348,"Zurich / Kloten (ZRH/LSZH)","Iraklion / Nikos Kazantzakis (HER/LGIR)",16:05:00,19:56:00,02:51:00,"Edelweiss Air (WK/EDW)","Airbus A320 (A320)",HB-JJK,,1,2,1,,3548,1112,1726,27
+2022-05-27,WK349,"Iraklion / Nikos Kazantzakis (HER/LGIR)","Zurich / Kloten (ZRH/LSZH)",20:50:00,22:38:00,02:48:00,"Edelweiss Air (WK/EDW)","Airbus A320 (A320)",HB-IJV,,1,2,1,,1112,3548,1726,27
+2018-07-12,LH94,"Frankfurt am Main / Frankfurt (FRA/EDDF)","Munich / Franz Josef Strauss (MUC/EDDM)",07:15:00,08:10:00,00:55:00,"Lufthansa (LH/DLH)","Airbus A321 (A321)",D-AISW,,1,1,2,,919,1952,239,28
+2018-07-13,LH2372,"Munich / Franz Josef Strauss (MUC/EDDM)","Zurich / Kloten (ZRH/LSZH)",18:40:00,19:35:00,00:55:00,"Lufthansa (LH/DLH)","Fokker 100 (F100)",HB-JVG,,1,1,2,,1952,3548,239,710
+2019-07-20,LX1012,"Zurich / Kloten (ZRH/LSZH)","Dusseldorf / Dusseldorf International (DUS/EDDL)",09:07:00,10:09:00,01:02:00,"Swiss International Airlines (LX/SWR)","Airbus A320-200 (A320)",HB-IJP,,1,1,1,,3548,763,741,2059
+2019-05-19,LX1019,"Dusseldorf / Dusseldorf International (DUS/EDDL)","Zurich / Kloten (ZRH/LSZH)",14:50:00,16:05:00,01:15:00,"Swiss International Airlines (LX/SWR)","Bombardier CS300 (BCS3)",HB-JCC,,1,1,1,,763,3548,741,2113
+2019-05-18,LX1018,"Zurich / Kloten (ZRH/LSZH)","Dusseldorf / Dusseldorf International (DUS/EDDL)",12:55:00,14:15:00,01:20:00,"Swiss International Airlines (LX/SWR)","Airbus A220-300 (BCS3)",HB-JCM,,1,1,1,,3548,763,741,2142
+2019-07-21,LX1019,"Dusseldorf / Dusseldorf International (DUS/EDDL)","Zurich / Kloten (ZRH/LSZH)",14:50:00,16:05:00,01:15:00,"Swiss International Airlines (LX/SWR)","Airbus A220-300 (BCS3)",HB-JCL,,1,1,1,,763,3548,741,2142
+2019-09-29,LX1024,"Zurich / Kloten (ZRH/LSZH)","Dusseldorf / Dusseldorf International (DUS/EDDL)",16:30:00,17:45:00,01:15:00,"Swiss International Airlines (LX/SWR)","Airbus A320 (A320)",HB-IJJ,,1,1,1,,3548,763,741,27
+2019-09-30,LH5884,"Dusseldorf / Dusseldorf International (DUS/EDDL)","Zurich / Kloten (ZRH/LSZH)",11:03:00,12:18:00,01:15:00,"Swiss International Airlines (LX/SWR)","Airbus A220-300 (BCS3)",HB-JCE,,1,1,1,,763,3548,741,2142
+2021-08-23,WK214,"Zurich / Kloten (ZRH/LSZH)","Tenerife-South / Reina Sofia (TFS/GCTS)",18:23:00,21:47:00,04:24:00,"Edelweiss Air (WK/EDW)","Airbus A320 (A320)",HB-JJN,,1,2,1,,3548,2897,1726,27
+2025-03-15,LH1187,"Zurich / Kloten (ZRH/LSZH)","Frankfurt am Main / Frankfurt (FRA/EDDF)",11:15:00,12:20:00,01:05:00,"Lufthansa (LH/DLH)","Airbus A320 (A320)",D-AIZM,,1,1,1,,3548,919,239,27
+2025-03-16,LH1196,"Frankfurt am Main / Frankfurt (FRA/EDDF)","Zurich / Kloten (ZRH/LSZH)",16:20:00,17:15:00,00:55:00,"Lufthansa (LH/DLH)","Airbus A320neo (A20N)",D-AINJ,,1,1,1,,919,3548,239,2127
+2018-02-08,LH429,"Charlotte / Douglas (CLT/KCLT)","Munich / Franz Josef Strauss (MUC/EDDM)",18:40:00,09:15:00,08:35:00,"Lufthansa (LH/DLH)","Airbus A330-300 (A333)",D-AIKB,,1,4,2,,575,1952,239,31
+2018-02-09,LH2368,"Munich / Franz Josef Strauss (MUC/EDDM)","Zurich / Kloten (ZRH/LSZH)",12:00:00,12:55:00,00:55:00,"Lufthansa (LH/DLH)","Airbus A320 (A320)",D-AIZD,,1,1,2,,1952,3548,239,27
+2025-04-12,LH1191,"Zurich / Kloten (ZRH/LSZH)","Frankfurt am Main / Frankfurt (FRA/EDDF)",14:40:00,15:40:00,01:00:00,"Lufthansa (LH/DLH)","Airbus A319 (A319)",D-AILN,,3,2,1,,3548,919,239,26
+2025-04-13,LH1186,"Frankfurt am Main / Frankfurt (FRA/EDDF)","Zurich / Kloten (ZRH/LSZH)",10:30:00,11:00:00,00:30:00,"Lufthansa (LH/DLH)","Airbus A319 (A319)",D-AIBJ,,1,1,1,,919,3548,239,26
+2025-04-26,LH1187,"Zurich / Kloten (ZRH/LSZH)","Frankfurt am Main / Frankfurt (FRA/EDDF)",11:20:00,12:25:00,01:05:00,"Lufthansa (LH/DLH)","Airbus A320 (A320)",D-AIUC,4A,1,2,1,,3548,919,239,27
+2025-04-27,LH1186,"Frankfurt am Main / Frankfurt (FRA/EDDF)","Zurich / Kloten (ZRH/LSZH)",09:45:00,10:40:00,00:55:00,"Lufthansa (LH/DLH)","Airbus A320 (A320)",D-AILL,14A,1,1,1,,919,3548,239,27
+2025-05-01,WK288,"Zurich / Kloten (ZRH/LSZH)","Faro / Faro (FAO/LPFR)",13:40:00,15:30:00,02:50:00,"Edelweiss Air (WK/EDW)","Airbus A350-900 (A359)",HB-IHF,4C,3,2,1,,3548,865,1726,2110
+2025-05-02,LH1787,"Faro / Faro (FAO/LPFR)","Munich / Franz Josef Strauss (MUC/EDDM)",15:55:00,20:05:00,03:10:00,"Lufthansa (LH/DLH)","Airbus A321 (A321)",D-AIDM,4A,1,2,1,,865,1952,239,28
+2025-05-02,LX1111,"Munich / Franz Josef Strauss (MUC/EDDM)","Zurich / Kloten (ZRH/LSZH)",20:55:00,21:50:00,00:55:00,"Swiss International Airlines (LX/SWR)","Embraer ERJ-195 (E195)",HB-JVZ,22A,1,1,1,,1952,3548,741,2016
+2025-05-17,LH1187,"Zurich / Kloten (ZRH/LSZH)","Frankfurt am Main / Frankfurt (FRA/EDDF)",11:20:00,12:25:00,01:05:00,"Lufthansa (LH/DLH)","Airbus A321 (A321)",D-AIRH,23A,1,1,1,,3548,919,239,28
+2025-05-18,LH1182,"Frankfurt am Main / Frankfurt (FRA/EDDF)","Zurich / Kloten (ZRH/LSZH)",06:40:00,07:35:00,00:55:00,"Lufthansa (LH/DLH)","Airbus A320neo (A20N)",D-AINY,2F,1,2,1,,919,3548,239,2127
+2025-06-12,WK200,"Zurich / Kloten (ZRH/LSZH)","Gran Canaria / Las Palmas (LPA/GCLP)",13:25:00,16:55:00,04:30:00,"Edelweiss Air (WK/EDW)","Airbus A320 (A320)",HB-JJN,2A,1,2,1,,3548,1666,1726,27
+2025-06-15,WK201,"Gran Canaria / Las Palmas (LPA/GCLP)","Zurich / Kloten (ZRH/LSZH)",10:45:00,15:45:00,04:00:00,"Edelweiss Air (WK/EDW)","Airbus A320 (A320)",HB-JLT,4A,1,2,1,,1666,3548,1726,27
+2025-06-18,LH158,"Frankfurt am Main / Frankfurt (FRA/EDDF)","Leipzig Halle / Schkeuditz (LEJ/EDDP)",13:25:00,14:25:00,01:00:00,"Lufthansa (LH/DLH)","Airbus A319 (A319)",D-AILK,3F,1,2,1,,919,1594,239,26
+2025-06-19,LH159,"Leipzig Halle / Schkeuditz (LEJ/EDDP)","Frankfurt am Main / Frankfurt (FRA/EDDF)",08:50:00,09:50:00,01:00:00,"Lufthansa (LH/DLH)","Airbus A320 (A320)",D-AIZS,18A,1,1,1,,1594,919,239,27

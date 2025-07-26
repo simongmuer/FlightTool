@@ -320,13 +320,13 @@ setup_database_comprehensive() {
     log_step "Comprehensive database setup with error handling..."
     
     # Fix locale issues first
-    pct exec "$CONTAINER_ID" -- export DEBIAN_FRONTEND=noninteractive
-    pct exec "$CONTAINER_ID" -- apt-get update -qq
-    pct exec "$CONTAINER_ID" -- apt-get install -y locales
-    pct exec "$CONTAINER_ID" -- locale-gen en_US.UTF-8
-    pct exec "$CONTAINER_ID" -- update-locale LANG=en_US.UTF-8
-    pct exec "$CONTAINER_ID" -- bash -c "echo 'export LANG=en_US.UTF-8' >> /etc/environment"
-    pct exec "$CONTAINER_ID" -- bash -c "echo 'export LC_ALL=en_US.UTF-8' >> /etc/environment"
+    log_info "Configuring locale settings..."
+    pct exec "$CONTAINER_ID" -- bash -c "export DEBIAN_FRONTEND=noninteractive && apt-get update -qq >/dev/null 2>&1" || true
+    pct exec "$CONTAINER_ID" -- bash -c "export DEBIAN_FRONTEND=noninteractive && apt-get install -y locales >/dev/null 2>&1" || true
+    pct exec "$CONTAINER_ID" -- locale-gen en_US.UTF-8 >/dev/null 2>&1 || true
+    pct exec "$CONTAINER_ID" -- update-locale LANG=en_US.UTF-8 >/dev/null 2>&1 || true
+    pct exec "$CONTAINER_ID" -- bash -c "echo 'export LANG=en_US.UTF-8' >> /etc/environment" || true
+    pct exec "$CONTAINER_ID" -- bash -c "echo 'export LC_ALL=en_US.UTF-8' >> /etc/environment" || true
     
     # Stop any existing processes
     pct exec "$CONTAINER_ID" -- systemctl stop flighttool || true
@@ -341,31 +341,29 @@ setup_database_comprehensive() {
     pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "DROP ROLE IF EXISTS flighttool;" || true
     
     log_info "Creating new database user and database..."
-    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "CREATE ROLE flighttool WITH LOGIN PASSWORD '$DB_PASSWORD';" || {
+    if ! pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "CREATE ROLE flighttool WITH LOGIN PASSWORD '$DB_PASSWORD';"; then
         log_error "Failed to create database user"
         return 1
-    }
+    fi
     
-    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "ALTER ROLE flighttool CREATEDB;" || {
+    if ! pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "ALTER ROLE flighttool CREATEDB;"; then
         log_error "Failed to set database creation privileges"
         return 1
-    }
+    fi
     
-    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "CREATE DATABASE flighttool OWNER flighttool;" || {
+    if ! pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "CREATE DATABASE flighttool OWNER flighttool;"; then
         log_error "Failed to create database"
         return 1
-    }
+    fi
     
     log_info "Setting database permissions..."
-    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE flighttool TO flighttool;"
-    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO flighttool;" -d flighttool
-    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "GRANT ALL ON SCHEMA public TO flighttool;" -d flighttool
-    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO flighttool;" -d flighttool
-    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO flighttool;" -d flighttool
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE flighttool TO flighttool;" || true
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO flighttool;" -d flighttool || true
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "GRANT ALL ON SCHEMA public TO flighttool;" -d flighttool || true
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO flighttool;" -d flighttool || true
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO flighttool;" -d flighttool || true
 
-    log_info "Creating database schema - this will be handled by the application startup..."
-    log_info "Database tables will be automatically created when FlightTool starts"
-    
+    log_info "Database schema will be automatically created when FlightTool starts"
     log_info "Database setup completed successfully"
 }
 

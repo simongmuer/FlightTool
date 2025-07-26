@@ -188,6 +188,12 @@ The application is designed to run seamlessly on Replit with minimal configurati
 - **Auto-schema creation** on application startup prevents manual database issues
 - **Locale and permission fixes** integrated into proxmox-setup.sh and lxc-setup.sh
 
+### Proxmox Container Database Configuration
+- **Local PostgreSQL**: Proxmox setup creates local database within container
+- **Database URL Format**: `postgresql://flighttool:password@localhost:5432/flighttool`
+- **Current Issue**: Development environment using Neon cloud database instead of local
+- **For Proxmox Deployment**: Use local DATABASE_URL with container's PostgreSQL instance
+
 ### Authentication Strategy (Updated January 26, 2025)
 - **Complete Offline System**: Custom username/password authentication with bcrypt hashing
 - **Local Database Storage**: User credentials stored securely in PostgreSQL

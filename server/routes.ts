@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./auth";
 import { insertFlightSchema, insertAirportSchema, insertAirlineSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
@@ -12,24 +12,14 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
-  await setupAuth(app);
+  setupAuth(app);
 
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
+  // Additional API routes (auth routes are handled in setupAuth)
 
   // Flight routes
   app.get('/api/flights', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const flights = await storage.getFlights(userId);
       res.json(flights);
     } catch (error) {
@@ -40,7 +30,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/flights/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const flight = await storage.getFlight(req.params.id, userId);
       if (!flight) {
         return res.status(404).json({ message: "Flight not found" });
@@ -54,7 +44,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/flights', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const flightData = insertFlightSchema.parse(req.body);
       
       const flight = await storage.createFlight({
@@ -74,7 +64,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put('/api/flights/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const flightData = insertFlightSchema.partial().parse(req.body);
       
       const flight = await storage.updateFlight(req.params.id, userId, flightData);
@@ -94,7 +84,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete('/api/flights/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const success = await storage.deleteFlight(req.params.id, userId);
       if (!success) {
         return res.status(404).json({ message: "Flight not found" });
@@ -109,7 +99,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // CSV Import route
   app.post('/api/flights/import-csv', isAuthenticated, upload.single('csvFile'), async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       
       if (!req.file) {
         return res.status(400).json({ message: "No CSV file provided" });
@@ -174,7 +164,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Statistics route
   app.get('/api/stats', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const stats = await storage.getFlightStats(userId);
       res.json(stats);
     } catch (error) {

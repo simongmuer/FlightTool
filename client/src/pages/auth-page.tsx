@@ -16,7 +16,8 @@ export default function AuthPage() {
 
   // Redirect if already authenticated
   if (!isLoading && user) {
-    setTimeout(() => setLocation("/"), 0);
+    console.log("User authenticated, redirecting to dashboard...", user);
+    setLocation("/");
     return null;
   }
 
@@ -36,16 +37,18 @@ export default function AuthPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await loginMutation.mutateAsync(loginData);
+      console.log("Attempting login...", loginData.username);
+      const result = await loginMutation.mutateAsync(loginData);
+      console.log("Login successful, user data:", result);
       toast({
         title: "Welcome back!",
         description: "Successfully logged in.",
       });
       // Force immediate redirect after successful login
-      setTimeout(() => {
-        setLocation("/");
-      }, 200);
+      console.log("Redirecting to dashboard...");
+      setLocation("/");
     } catch (error) {
+      console.error("Login failed:", error);
       // Error handling is done in the mutation
     }
   };

@@ -43,6 +43,7 @@ export function AuthProvider(props: { children: ReactNode }) {
       return await res.json();
     },
     onSuccess: (user: User) => {
+      console.log("Login mutation success, setting user data:", user);
       // Immediately update the query cache with the user data
       queryClient.setQueryData(["/api/auth/user"], user);
       // Force an immediate refetch to ensure consistency

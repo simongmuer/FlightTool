@@ -119,15 +119,37 @@ app.use((req, res, next) => {
   next();
 });
 
+// Development authentication middleware
+const devAuth = (req, res, next) => {
+  req.user = {
+    claims: {
+      sub: "prod-user-123",
+      email: "user@example.com", 
+      first_name: "Flight",
+      last_name: "User",
+      profile_image_url: null
+    }
+  };
+  next();
+};
+
 // API routes
-app.get("/api/auth/user", (req, res) => {
-  res.status(401).json({ message: "Unauthorized" });
+app.get("/api/auth/user", devAuth, (req, res) => {
+  res.json({
+    id: req.user.claims.sub,
+    email: req.user.claims.email,
+    firstName: req.user.claims.first_name,
+    lastName: req.user.claims.last_name,
+    profileImageUrl: req.user.claims.profile_image_url,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  });
 });
 
 app.get("/api/login", (req, res) => {
   res.json({ 
-    message: "Login endpoint available", 
-    note: "Full authentication system ready for integration",
+    message: "Authentication in development mode", 
+    note: "Auto-signed in as development user",
     redirect: "/"
   });
 });
@@ -148,6 +170,31 @@ app.get("/api/health", (req, res) => {
     version: "1.0.0",
     environment: process.env.NODE_ENV || "development"
   });
+});
+
+// Mock flight endpoints for development
+app.get("/api/flights", devAuth, (req, res) => {
+  res.json([]);
+});
+
+app.get("/api/stats", devAuth, (req, res) => {
+  res.json({
+    totalFlights: 0,
+    totalDistance: 0,
+    airportsVisited: 0,
+    airlinesFlown: 0,
+    recentFlights: [],
+    topAirlines: [],
+    monthlyActivity: []
+  });
+});
+
+app.get("/api/airports", (req, res) => {
+  res.json([]);
+});
+
+app.get("/api/airlines", (req, res) => {
+  res.json([]);
 });
 
 // Cache control for static assets

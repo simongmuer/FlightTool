@@ -81,13 +81,21 @@ function updateUserSession(
 async function upsertUser(
   claims: any,
 ) {
-  await storage.upsertUser({
-    id: claims["sub"],
-    email: claims["email"],
-    firstName: claims["first_name"],
-    lastName: claims["last_name"],
-    profileImageUrl: claims["profile_image_url"],
-  });
+  try {
+    await storage.upsertUser({
+      id: claims["sub"],
+      email: claims["email"],
+      firstName: claims["first_name"],
+      lastName: claims["last_name"],
+      profileImageUrl: claims["profile_image_url"],
+    });
+  } catch (error) {
+    console.error("Error upserting user:", error);
+    // Don't throw in development mode
+    if (process.env.NODE_ENV !== "development") {
+      throw error;
+    }
+  }
 }
 
 export async function setupAuth(app: Express) {
@@ -182,9 +190,24 @@ export async function setupAuth(app: Express) {
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
+  // In development mode without proper OIDC config, skip authentication
+  if (process.env.NODE_ENV === "development") {
+    // Create a mock user for development
+    (req as any).user = {
+      claims: {
+        sub: "dev-user-123",
+        email: "developer@example.com",
+        first_name: "Dev",
+        last_name: "User",
+        profile_image_url: null
+      }
+    };
+    return next();
+  }
+
   const user = req.user as any;
 
-  if (!req.isAuthenticated() || !user.expires_at) {
+  if (!req.isAuthenticated() || !user?.expires_at) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 

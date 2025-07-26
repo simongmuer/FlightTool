@@ -41,7 +41,10 @@ export default function AuthPage() {
         title: "Welcome back!",
         description: "Successfully logged in.",
       });
-      // The app will automatically redirect when user becomes truthy
+      // Force immediate redirect after successful login
+      setTimeout(() => {
+        setLocation("/");
+      }, 200);
     } catch (error) {
       // Error handling is done in the mutation
     }
@@ -55,7 +58,10 @@ export default function AuthPage() {
         title: "Welcome to FlightTool!",
         description: "Account created successfully.",
       });
-      // The app will automatically redirect when user becomes truthy
+      // Force immediate redirect after successful registration
+      setTimeout(() => {
+        setLocation("/");
+      }, 200);
     } catch (error) {
       // Error handling is done in the mutation
     }

@@ -43,11 +43,10 @@ export function AuthProvider(props: { children: ReactNode }) {
       return await res.json();
     },
     onSuccess: (user: User) => {
+      // Immediately update the query cache with the user data
       queryClient.setQueryData(["/api/auth/user"], user);
-      // Force a refetch to ensure the session is properly established
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      }, 100);
+      // Force an immediate refetch to ensure consistency
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
     },
     onError: (error: Error) => {
       toast({
@@ -64,11 +63,10 @@ export function AuthProvider(props: { children: ReactNode }) {
       return await res.json();
     },
     onSuccess: (user: User) => {
+      // Immediately update the query cache with the user data
       queryClient.setQueryData(["/api/auth/user"], user);
-      // Force a refetch to ensure the session is properly established after registration
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      }, 100);
+      // Force an immediate refetch to ensure consistency
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
     },
     onError: (error: Error) => {
       toast({

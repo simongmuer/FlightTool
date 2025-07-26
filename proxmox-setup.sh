@@ -288,7 +288,11 @@ EOF"
         
         log_info "Building application for production..."
         pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && chmod +x build-production.sh"
-        pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && DATABASE_URL=\$DATABASE_URL CLEAN_DEV_DEPS=true ./build-production.sh"
+        # Try the production build script, fall back to simple build if it fails
+        if ! pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && DATABASE_URL=\$DATABASE_URL CLEAN_DEV_DEPS=true timeout 300 ./build-production.sh"; then
+            log_warn "Production build failed, using simplified build process..."
+            create_simple_production_build
+        fi
     fi
     
     # Set proper ownership and permissions
@@ -393,6 +397,65 @@ echo \"Production build completed successfully\"
 EOFSCRIPT"
     
     pct exec "$CONTAINER_ID" -- chmod +x /home/flighttool/app/build-production.sh
+}
+
+# Create simple production build without complex dependencies
+create_simple_production_build() {
+    log_info "Creating simplified production build..."
+    
+    pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && rm -rf dist && mkdir -p dist"
+    
+    # Build frontend only
+    pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm run build"
+    
+    # Create simple static server
+    pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && cat > dist/index.js << 'EOFSIMPLE'
+import express from \"express\";
+import { fileURLToPath } from \"url\";
+import { dirname, resolve } from \"path\";
+import fs from \"fs\";
+import { createServer } from \"http\";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// Logging
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on(\"finish\", () => {
+    const duration = Date.now() - start;
+    if (req.path.startsWith(\"/api\")) {
+      console.log(\`\${new Date().toLocaleTimeString()} [express] \${req.method} \${req.path} \${res.statusCode} in \${duration}ms\`);
+    }
+  });
+  next();
+});
+
+// Serve static files
+const distPath = resolve(__dirname, \"public\");
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.get(\"*\", (req, res) => {
+    res.sendFile(resolve(distPath, \"index.html\"));
+  });
+} else {
+  app.get(\"*\", (req, res) => {
+    res.status(503).send(\"Frontend build not available\");
+  });
+}
+
+const httpServer = createServer(app);
+const port = parseInt(process.env.PORT || \"3000\", 10);
+httpServer.listen(port, \"0.0.0.0\", () => {
+  console.log(\`\${new Date().toLocaleTimeString()} [express] serving on port \${port}\`);
+});
+EOFSIMPLE"
+    
+    log_info "Simple build completed - serving frontend only"
 }
 
 # Create systemd service

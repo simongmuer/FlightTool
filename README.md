@@ -85,11 +85,13 @@ The application will be available at `http://localhost:5000`
 
 ## Database Schema
 
-- **Users**: User profiles from Replit Auth (ID, email, name, profile image)
-- **Flights**: Core flight data including dates, airports, airlines, aircraft details
-- **Airlines**: Reference data for airline information
-- **Airports**: Reference data for airport information
-- **Sessions**: Session storage for user authentication
+The database schema is automatically created when the application starts. No manual setup required.
+
+- **Users**: User profiles with authentication (ID, username, password, email, profile info)
+- **Flights**: Core flight data including dates, airports, airlines, aircraft details, and notes
+- **Airlines**: Reference data for airline information (automatically seeded)
+- **Airports**: Reference data for airport information (automatically seeded)
+- **Sessions**: Session storage for user authentication (PostgreSQL-backed)
 
 ## CSV Import Format
 

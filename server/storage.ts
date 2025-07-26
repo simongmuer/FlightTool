@@ -226,4 +226,158 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
+// Initialize database schema on startup
+async function initializeDatabase() {
+  try {
+    // Check if tables exist and create them if needed
+    const tablesExist = await db.execute(sql`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = 'users'
+      );
+    `);
+    
+    if (!tablesExist[0]?.exists) {
+      console.log("Creating database schema...");
+      
+      // Create sessions table
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS sessions (
+          sid VARCHAR PRIMARY KEY,
+          sess JSONB NOT NULL,
+          expire TIMESTAMP NOT NULL
+        );
+      `);
+      await db.execute(sql`CREATE INDEX IF NOT EXISTS IDX_session_expire ON sessions (expire);`);
+      
+      // Create users table
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS users (
+          id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+          email VARCHAR UNIQUE,
+          first_name VARCHAR,
+          last_name VARCHAR,
+          profile_image_url VARCHAR,
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW(),
+          username VARCHAR UNIQUE NOT NULL,
+          password VARCHAR NOT NULL
+        );
+      `);
+      
+      // Create airports table
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS airports (
+          id SERIAL PRIMARY KEY,
+          iata_code VARCHAR(3) UNIQUE,
+          icao_code VARCHAR(4) UNIQUE,
+          name VARCHAR NOT NULL,
+          city VARCHAR,
+          country VARCHAR,
+          latitude DECIMAL(10,8),
+          longitude DECIMAL(11,8),
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        );
+      `);
+      
+      // Create airlines table
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS airlines (
+          id SERIAL PRIMARY KEY,
+          iata_code VARCHAR(2) UNIQUE,
+          icao_code VARCHAR(3) UNIQUE,
+          name VARCHAR NOT NULL,
+          country VARCHAR,
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        );
+      `);
+      
+      // Create flights table
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS flights (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          flight_number VARCHAR,
+          airline VARCHAR,
+          from_airport VARCHAR NOT NULL,
+          to_airport VARCHAR NOT NULL,
+          departure_date DATE NOT NULL,
+          departure_time TIME,
+          arrival_date DATE,
+          arrival_time TIME,
+          aircraft_type VARCHAR,
+          seat_number VARCHAR,
+          flight_class VARCHAR,
+          ticket_price DECIMAL(10,2),
+          currency VARCHAR(3) DEFAULT 'USD',
+          notes TEXT,
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        );
+      `);
+      
+      // Create indexes
+      await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_flights_user_id ON flights(user_id);`);
+      await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_flights_departure_date ON flights(departure_date);`);
+      await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_airports_iata ON airports(iata_code);`);
+      await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_airlines_iata ON airlines(iata_code);`);
+      
+      // Insert basic airport data
+      const airportData = [
+        ['JFK', 'KJFK', 'John F. Kennedy International Airport', 'New York', 'United States'],
+        ['LAX', 'KLAX', 'Los Angeles International Airport', 'Los Angeles', 'United States'],
+        ['LHR', 'EGLL', 'London Heathrow Airport', 'London', 'United Kingdom'],
+        ['CDG', 'LFPG', 'Charles de Gaulle Airport', 'Paris', 'France'],
+        ['NRT', 'RJAA', 'Narita International Airport', 'Tokyo', 'Japan'],
+        ['DXB', 'OMDB', 'Dubai International Airport', 'Dubai', 'United Arab Emirates'],
+        ['SIN', 'WSSS', 'Singapore Changi Airport', 'Singapore', 'Singapore'],
+        ['FRA', 'EDDF', 'Frankfurt Airport', 'Frankfurt', 'Germany'],
+        ['AMS', 'EHAM', 'Amsterdam Airport Schiphol', 'Amsterdam', 'Netherlands'],
+        ['SYD', 'YSSY', 'Sydney Kingsford Smith Airport', 'Sydney', 'Australia']
+      ];
+      
+      for (const [iata, icao, name, city, country] of airportData) {
+        await db.execute(sql`
+          INSERT INTO airports (iata_code, icao_code, name, city, country) 
+          VALUES (${iata}, ${icao}, ${name}, ${city}, ${country})
+          ON CONFLICT (iata_code) DO NOTHING;
+        `);
+      }
+      
+      // Insert basic airline data
+      const airlineData = [
+        ['AA', 'AAL', 'American Airlines', 'United States'],
+        ['UA', 'UAL', 'United Airlines', 'United States'],
+        ['DL', 'DAL', 'Delta Air Lines', 'United States'],
+        ['BA', 'BAW', 'British Airways', 'United Kingdom'],
+        ['AF', 'AFR', 'Air France', 'France'],
+        ['LH', 'DLH', 'Lufthansa', 'Germany'],
+        ['EK', 'UAE', 'Emirates', 'United Arab Emirates'],
+        ['SQ', 'SIA', 'Singapore Airlines', 'Singapore'],
+        ['QF', 'QFA', 'Qantas', 'Australia'],
+        ['JL', 'JAL', 'Japan Airlines', 'Japan']
+      ];
+      
+      for (const [iata, icao, name, country] of airlineData) {
+        await db.execute(sql`
+          INSERT INTO airlines (iata_code, icao_code, name, country) 
+          VALUES (${iata}, ${icao}, ${name}, ${country})
+          ON CONFLICT (iata_code) DO NOTHING;
+        `);
+      }
+      
+      console.log("Database schema created successfully");
+    }
+  } catch (error) {
+    console.error("Database initialization error:", error);
+    // Don't throw error - allow app to continue running
+  }
+}
+
 export const storage = new DatabaseStorage();
+
+// Initialize database on module load
+initializeDatabase().catch(console.error);

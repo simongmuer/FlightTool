@@ -31,7 +31,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider(props: { children: ReactNode }) {
   const { toast } = useToast();
   
-  const { data: user, error, isLoading } = useQuery({
+  const { data: user, error, isLoading } = useQuery<User | null>({
     queryKey: ["/api/auth/user"],
     queryFn: getQueryFn({ on401: "returnNull" }),
     retry: false,
@@ -44,6 +44,10 @@ export function AuthProvider(props: { children: ReactNode }) {
     },
     onSuccess: (user: User) => {
       queryClient.setQueryData(["/api/auth/user"], user);
+      // Force a refetch to ensure the session is properly established
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      }, 100);
     },
     onError: (error: Error) => {
       toast({
@@ -61,6 +65,10 @@ export function AuthProvider(props: { children: ReactNode }) {
     },
     onSuccess: (user: User) => {
       queryClient.setQueryData(["/api/auth/user"], user);
+      // Force a refetch to ensure the session is properly established after registration
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      }, 200);
     },
     onError: (error: Error) => {
       toast({

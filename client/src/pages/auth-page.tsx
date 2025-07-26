@@ -41,7 +41,10 @@ export default function AuthPage() {
         title: "Welcome back!",
         description: "Successfully logged in.",
       });
-      setLocation("/");
+      // Wait a bit for the auth context to update before redirecting
+      setTimeout(() => {
+        setLocation("/");
+      }, 300);
     } catch (error) {
       // Error handling is done in the mutation
     }
@@ -55,7 +58,10 @@ export default function AuthPage() {
         title: "Welcome to FlightTool!",
         description: "Account created successfully.",
       });
-      setLocation("/");
+      // Wait a bit for the auth context to update before redirecting
+      setTimeout(() => {
+        setLocation("/");
+      }, 300);
     } catch (error) {
       // Error handling is done in the mutation
     }

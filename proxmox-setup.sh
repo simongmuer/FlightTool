@@ -40,6 +40,10 @@ log_error() {
 }
 
 log_step() {
+    echo -e "${GREEN}[STEP]${NC} $1"
+}
+
+log_step() {
     echo -e "${BLUE}[STEP]${NC} $1"
 }
 
@@ -328,153 +332,39 @@ setup_database_comprehensive() {
     pct exec "$CONTAINER_ID" -- systemctl stop flighttool || true
     pct exec "$CONTAINER_ID" -- pkill -f 'node.*flighttool' || true
     
-    # Terminate database connections and recreate
-    pct exec "$CONTAINER_ID" -- sudo -u postgres psql << EOF
--- Terminate all connections to flighttool database
-SELECT pg_terminate_backend(pg_stat_activity.pid) 
-FROM pg_stat_activity 
-WHERE pg_stat_activity.datname = 'flighttool' 
-AND pid <> pg_backend_pid();
+    # Terminate database connections and recreate with proper error handling
+    log_info "Terminating existing database connections..."
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'flighttool' AND pid <> pg_backend_pid();" || true
+    
+    log_info "Dropping existing database and user..."
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "DROP DATABASE IF EXISTS flighttool;" || true
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "DROP ROLE IF EXISTS flighttool;" || true
+    
+    log_info "Creating new database user and database..."
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "CREATE ROLE flighttool WITH LOGIN PASSWORD '$DB_PASSWORD';" || {
+        log_error "Failed to create database user"
+        return 1
+    }
+    
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "ALTER ROLE flighttool CREATEDB;" || {
+        log_error "Failed to set database creation privileges"
+        return 1
+    }
+    
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "CREATE DATABASE flighttool OWNER flighttool;" || {
+        log_error "Failed to create database"
+        return 1
+    }
+    
+    log_info "Setting database permissions..."
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE flighttool TO flighttool;"
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO flighttool;" -d flighttool
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "GRANT ALL ON SCHEMA public TO flighttool;" -d flighttool
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO flighttool;" -d flighttool
+    pct exec "$CONTAINER_ID" -- sudo -u postgres psql -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO flighttool;" -d flighttool
 
--- Drop and recreate database and user
-DROP DATABASE IF EXISTS flighttool;
-DROP ROLE IF EXISTS flighttool;
-
--- Create role first, then database
-CREATE ROLE flighttool WITH LOGIN PASSWORD '$DB_PASSWORD';
-ALTER ROLE flighttool CREATEDB;
-CREATE DATABASE flighttool OWNER flighttool;
-
--- Grant permissions
-GRANT ALL PRIVILEGES ON DATABASE flighttool TO flighttool;
-GRANT ALL PRIVILEGES ON SCHEMA public TO flighttool;
-
--- Connect to flighttool database and set permissions
-\\c flighttool
-GRANT ALL ON SCHEMA public TO flighttool;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO flighttool;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO flighttool;
-
--- Create complete database schema
-DROP TABLE IF EXISTS flights CASCADE;
-DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS airports CASCADE;
-DROP TABLE IF EXISTS airlines CASCADE;
-DROP TABLE IF EXISTS sessions CASCADE;
-
--- Create sessions table (required for authentication)
-CREATE TABLE sessions (
-    sid VARCHAR PRIMARY KEY,
-    sess JSONB NOT NULL,
-    expire TIMESTAMP NOT NULL
-);
-CREATE INDEX IF NOT EXISTS IDX_session_expire ON sessions (expire);
-
--- Create users table
-CREATE TABLE users (
-    id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
-    email VARCHAR UNIQUE,
-    first_name VARCHAR,
-    last_name VARCHAR,
-    profile_image_url VARCHAR,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    username VARCHAR UNIQUE NOT NULL,
-    password VARCHAR NOT NULL
-);
-
--- Create airports table
-CREATE TABLE airports (
-    id SERIAL PRIMARY KEY,
-    iata_code VARCHAR(3) UNIQUE,
-    icao_code VARCHAR(4) UNIQUE,
-    name VARCHAR NOT NULL,
-    city VARCHAR,
-    country VARCHAR,
-    latitude DECIMAL(10,8),
-    longitude DECIMAL(11,8),
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-
--- Create airlines table  
-CREATE TABLE airlines (
-    id SERIAL PRIMARY KEY,
-    iata_code VARCHAR(2) UNIQUE,
-    icao_code VARCHAR(3) UNIQUE,
-    name VARCHAR NOT NULL,
-    country VARCHAR,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-
--- Create flights table
-CREATE TABLE flights (
-    id SERIAL PRIMARY KEY,
-    user_id VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    flight_number VARCHAR,
-    airline VARCHAR,
-    from_airport VARCHAR NOT NULL,
-    to_airport VARCHAR NOT NULL,
-    departure_date DATE NOT NULL,
-    departure_time TIME,
-    arrival_date DATE,
-    arrival_time TIME,
-    aircraft_type VARCHAR,
-    seat_number VARCHAR,
-    flight_class VARCHAR,
-    ticket_price DECIMAL(10,2),
-    currency VARCHAR(3) DEFAULT 'USD',
-    notes TEXT,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-
--- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_flights_user_id ON flights(user_id);
-CREATE INDEX IF NOT EXISTS idx_flights_departure_date ON flights(departure_date);
-CREATE INDEX IF NOT EXISTS idx_airports_iata ON airports(iata_code);
-CREATE INDEX IF NOT EXISTS idx_airlines_iata ON airlines(iata_code);
-
--- Insert basic airport data
-INSERT INTO airports (iata_code, icao_code, name, city, country) VALUES
-('JFK', 'KJFK', 'John F. Kennedy International Airport', 'New York', 'United States'),
-('LAX', 'KLAX', 'Los Angeles International Airport', 'Los Angeles', 'United States'),
-('LHR', 'EGLL', 'London Heathrow Airport', 'London', 'United Kingdom'),
-('CDG', 'LFPG', 'Charles de Gaulle Airport', 'Paris', 'France'),
-('NRT', 'RJAA', 'Narita International Airport', 'Tokyo', 'Japan'),
-('DXB', 'OMDB', 'Dubai International Airport', 'Dubai', 'United Arab Emirates'),
-('SIN', 'WSSS', 'Singapore Changi Airport', 'Singapore', 'Singapore'),
-('FRA', 'EDDF', 'Frankfurt Airport', 'Frankfurt', 'Germany'),
-('AMS', 'EHAM', 'Amsterdam Airport Schiphol', 'Amsterdam', 'Netherlands'),
-('SYD', 'YSSY', 'Sydney Kingsford Smith Airport', 'Sydney', 'Australia')
-ON CONFLICT (iata_code) DO NOTHING;
-
--- Insert basic airline data
-INSERT INTO airlines (iata_code, icao_code, name, country) VALUES
-('AA', 'AAL', 'American Airlines', 'United States'),
-('UA', 'UAL', 'United Airlines', 'United States'),
-('DL', 'DAL', 'Delta Air Lines', 'United States'),
-('BA', 'BAW', 'British Airways', 'United Kingdom'),
-('AF', 'AFR', 'Air France', 'France'),
-('LH', 'DLH', 'Lufthansa', 'Germany'),
-('EK', 'UAE', 'Emirates', 'United Arab Emirates'),
-('SQ', 'SIA', 'Singapore Airlines', 'Singapore'),
-('QF', 'QFA', 'Qantas', 'Australia'),
-('JL', 'JAL', 'Japan Airlines', 'Japan')
-ON CONFLICT (iata_code) DO NOTHING;
-
--- Grant all permissions to flighttool user
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO flighttool;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO flighttool;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO flighttool;
-
--- Set default privileges for future objects
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO flighttool;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO flighttool;
-
-\\q
-EOF
+    log_info "Creating database schema - this will be handled by the application startup..."
+    log_info "Database tables will be automatically created when FlightTool starts"
     
     log_info "Database setup completed successfully"
 }

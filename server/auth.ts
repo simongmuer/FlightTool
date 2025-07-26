@@ -60,7 +60,8 @@ export function setupAuth(app: Express) {
     const PostgresSessionStore = connectPg(session);
     sessionSettings.store = new PostgresSessionStore({
       conString: process.env.DATABASE_URL,
-      createTableIfMissing: true,
+      tableName: 'sessions', // Use our existing sessions table
+      createTableIfMissing: false,
     });
   } catch (error) {
     console.log("Using memory store for sessions (development mode)");

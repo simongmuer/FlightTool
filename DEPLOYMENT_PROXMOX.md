@@ -192,17 +192,12 @@ PORT=3000
 REPLIT_DOMAINS=your-domain.com
 EOF
 
-# Build application
-npm run build
-
-# Run database migrations (before removing dev dependencies)
-npm run db:push
-
-# Remove dev dependencies after build and migrations (optional, saves space)
-npm prune --production
+# Build application for production
+chmod +x build-production.sh
+DATABASE_URL=$DATABASE_URL ./build-production.sh
 
 # Test application startup
-npm start
+NODE_ENV=production npm start
 # Press Ctrl+C to stop after verifying it starts correctly
 
 # Exit back to root

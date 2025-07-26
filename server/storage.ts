@@ -203,16 +203,16 @@ export class DatabaseStorage implements IStorage {
     // Get monthly activity for current year
     const monthlyActivityResult = await db
       .select({
-        month: sql<string>`TO_CHAR(date, 'Mon')`,
+        month: sql<string>`TO_CHAR("date", 'Mon')`,
         count: sql<number>`count(*)`
       })
       .from(flights)
       .where(and(
         eq(flights.userId, userId),
-        sql`EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE)`
+        sql`EXTRACT(YEAR FROM "date") = EXTRACT(YEAR FROM CURRENT_DATE)`
       ))
-      .groupBy(sql`TO_CHAR(date, 'Mon')`, sql`EXTRACT(MONTH FROM date)`)
-      .orderBy(sql`EXTRACT(MONTH FROM date)`);
+      .groupBy(sql`TO_CHAR("date", 'Mon')`, sql`EXTRACT(MONTH FROM "date")`)
+      .orderBy(sql`EXTRACT(MONTH FROM "date")`);
 
     return {
       totalFlights,

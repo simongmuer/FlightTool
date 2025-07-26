@@ -276,14 +276,9 @@ EOF"
         log_info "Installing all dependencies (including dev dependencies for build)..."
         pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm install"
         
-        log_info "Building application..."
-        pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm run build"
-        
-        log_info "Running database migrations..."
-        pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm run db:push"
-        
-        log_info "Cleaning dev dependencies..."
-        pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && npm prune --production"
+        log_info "Building application for production..."
+        pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && chmod +x build-production.sh"
+        pct exec "$CONTAINER_ID" -- bash -c "cd /home/flighttool/app && DATABASE_URL=\$DATABASE_URL CLEAN_DEV_DEPS=true ./build-production.sh"
     fi
     
     # Set proper ownership and permissions
@@ -307,18 +302,19 @@ User=flighttool
 Group=flighttool
 WorkingDirectory=/home/flighttool/app
 Environment=NODE_ENV=production
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=HOME=/home/flighttool
 EnvironmentFile=/home/flighttool/app/.env
-ExecStart=/usr/bin/npm start
+ExecStart=/usr/bin/node dist/index.js
 ExecReload=/bin/kill -HUP \$MAINPID
 Restart=always
 RestartSec=10
 
-# Security settings
-NoNewPrivileges=true
-PrivateTmp=true
-ProtectSystem=strict
-ProtectHome=true
-ReadWritePaths=/home/flighttool/app
+# Security settings (relaxed for troubleshooting)
+NoNewPrivileges=false
+PrivateTmp=false
+ProtectSystem=false
+ProtectHome=false
 
 # Resource limits
 LimitNOFILE=65536

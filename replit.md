@@ -156,6 +156,7 @@ The application is designed to run seamlessly on Replit with minimal configurati
 - **Session Management**: PostgreSQL-backed sessions for reliable user persistence
 - **Authentication UI**: New login/registration pages with proper form validation and error handling
 - **Complete Offline Operation**: No external auth dependencies, fully self-contained system
+- **SSL/HTTPS Support**: Added automated Let's Encrypt certificate setup script with auto-renewal
 
 ### Current Deployment Status (January 26, 2025)
 - ✅ **Service Running Successfully** - FlightTool deployed and operational on Proxmox

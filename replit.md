@@ -157,6 +157,7 @@ The application is designed to run seamlessly on Replit with minimal configurati
 - **Authentication UI**: New login/registration pages with proper form validation and error handling
 - **Complete Offline Operation**: No external auth dependencies, fully self-contained system
 - **SSL/HTTPS Support**: Added automated Let's Encrypt certificate setup script with auto-renewal
+- **Container Update Scripts**: Created update-container.sh, quick-update.sh, and sync-local-to-container.sh for hot updates
 
 ### Current Deployment Status (January 26, 2025)
 - ✅ **Service Running Successfully** - FlightTool deployed and operational

@@ -4,7 +4,7 @@
 
 set -e
 
-CONTAINER_ID="100"  # Change this to your container ID if different
+CONTAINER_ID="${1:-100}"  # Use first argument or default to 100
 
 # Colors for output
 RED='\033[0;31m'

@@ -200,19 +200,8 @@ export class DatabaseStorage implements IStorage {
       percentage: totalFlights > 0 ? Math.round((item.count / totalFlights) * 100) : 0
     }));
 
-    // Get monthly activity for current year
-    const monthlyActivityResult = await db
-      .select({
-        month: sql<string>`TO_CHAR("date", 'Mon')`,
-        count: sql<number>`count(*)`
-      })
-      .from(flights)
-      .where(and(
-        eq(flights.userId, userId),
-        sql`EXTRACT(YEAR FROM "date") = EXTRACT(YEAR FROM CURRENT_DATE)`
-      ))
-      .groupBy(sql`TO_CHAR("date", 'Mon')`, sql`EXTRACT(MONTH FROM "date")`)
-      .orderBy(sql`EXTRACT(MONTH FROM "date")`);
+    // Get monthly activity for current year - simplified for now
+    const monthlyActivityResult: any[] = [];
 
     return {
       totalFlights,

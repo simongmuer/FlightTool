@@ -105,7 +105,7 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(flights)
       .where(and(eq(flights.id, parseInt(id)), eq(flights.userId, userId)));
-    return result.rowCount > 0;
+    return result.changes > 0;
   }
 
   // Airport operations

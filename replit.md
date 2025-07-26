@@ -141,3 +141,17 @@ The application is designed to run seamlessly on Replit with minimal configurati
 - Monorepo structure with clear separation of concerns
 - Type-safe implementation across frontend and backend
 - Production-ready with deployment instructions
+
+### Deployment Options Available
+- ✅ **Plesk Web Hosting** - Complete guide with automated setup
+- ✅ **LXC Containers** - Generic Linux container deployment
+- ✅ **Docker Containers** - Multi-container setup with docker-compose
+- ✅ **Proxmox VE** - Enterprise virtualization platform with LXC containers
+- ✅ **Automated Scripts** - Setup scripts for each deployment method
+
+### Latest Addition (January 26, 2025)
+- Created comprehensive Proxmox VE deployment guide with LXC containers
+- Includes enterprise-grade features: resource management, monitoring, backups
+- Automated setup script (proxmox-setup.sh) for one-command deployment
+- Full integration with Proxmox web interface for management
+- High availability and clustering support documentation
